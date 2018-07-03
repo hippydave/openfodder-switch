@@ -39,14 +39,14 @@ And extract the contents of `OpenFodder/` to `/switch/openfodder/` on your Ninte
 
 * [DOS] Copy 'CF_ENG.DAT' from the CD (or the GOG install destination) to the `/switch/openfodder/Data/Dos_CD` folder.
 * [Amiga] Copy the contents of 'cf_data'  into the `/switch/openfodder/Data/Amiga` directory.
-* Copy `openfodder.nro` to `/switch/openfodder/` and boot the game through the homebrew launcher.
+* Copy `openfodder-switch.nro` to `/switch/openfodder/` and boot the game through the homebrew launcher.
 
-## Bugs
+### Bugs
 
 * DOS sound effects dont work.
 * DOS has small graphical issues where the screen trys to scroll past the top left when you reach that area in a mission.
 
-## Compiling
+### Compiling
 
 Install DEVKITPRO.
 
@@ -56,7 +56,7 @@ Run make
 make -j8
 ```
 
-## Special Thanks
+### Special Thanks
 
 * DEVKITPRO
 * The developers of Open Fodder

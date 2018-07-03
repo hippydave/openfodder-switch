@@ -40,7 +40,7 @@ EXEFS_SRC	:=	exefs_src
 
 APP_TITLE	:= openfodder
 APP_AUTHOR 	:= Keeganator
-APP_VERSION := 0.9
+APP_VERSION := 1.4-switch
 ICON		:= icon.jpg
 
 #---------------------------------------------------------------------------------
