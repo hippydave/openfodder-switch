@@ -31,12 +31,14 @@
 #include <memory>
 #include <cstring>
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #ifndef EMSCRIPTEN
-#include <SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #else
-#include <SDL/SDL_mixer.h>
+#include <SDL2/SDL_mixer.h>
 #endif
+
+#include <switch.h>
 
 #include "Types.hpp"
 

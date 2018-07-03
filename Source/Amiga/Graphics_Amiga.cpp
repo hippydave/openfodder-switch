@@ -20,8 +20,8 @@
 *
 */
 
-#include "stdafx.hpp"
-#include "Amiga/SpriteData_Amiga.hpp"
+#include "../stdafx.hpp"
+#include "SpriteData_Amiga.hpp"
 
 const sHillOverlay_Amiga mHillOverlay_Amiga[] = {
 	{ 0x12, 0, 0x90, 0xA8 },			// Top Right

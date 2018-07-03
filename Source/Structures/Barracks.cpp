@@ -20,7 +20,7 @@
 *
 */
 
-#include "stdafx.hpp"
+#include "../stdafx.hpp"
 
 const std::vector<sStructure> mStructuresBarracksWithSoldier = {
 

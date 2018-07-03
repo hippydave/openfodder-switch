@@ -63,6 +63,13 @@ cFodder::cFodder(cWindow* pWindow, bool pSkipIntro) {
 
     mMouseButtons = 0;
 
+    JoyButtonUp = 0;
+    JoyButtonDown = 0;
+    JoyButtonLeft = 0;
+    JoyButtonRight = 0;
+    JoyAxisX = 0;
+    JoyAxisY = 0;
+
     mouse_Button_Status = 0;
     mouse_Pos_Column = 0;
     mouse_Pos_Row = 0;
@@ -942,9 +949,9 @@ void cFodder::Map_Save_Sprites(const std::string pFilename) {
     std::ofstream outfile(SptFilename, std::ofstream::binary);
 
     // Number of sprites in use
-    size_t SpriteCount = std::count_if(std::begin(mSprites), std::end(mSprites), [](auto& l) {
+    size_t SpriteCount = 0;/*std::count_if(std::begin(mSprites), std::end(mSprites), [](auto& l) {
         return l.field_0 != -32768 && l.field_0 != -1;
-    });
+    });*/
 
     auto MapSpt = tSharedBuffer(new std::vector<uint8>());
     MapSpt->resize(SpriteCount * 0x0A);
@@ -2903,57 +2910,262 @@ bool cFodder::EventAdd(cEvent pEvent) {
 }
 
 void cFodder::eventProcess() {
-    g_Window.EventCheck();
 
-    for (auto Event : mEvents) {
+    int16 speed = 16;
 
-        switch (Event.mType) {
+    hidScanInput();
 
-        case eEvent_KeyDown:
-            keyProcess(Event.mButton, false);
-            break;
+    u32 kDown = hidKeysHeld(CONTROLLER_P1_AUTO);
 
-        case eEvent_KeyUp:
-            keyProcess(Event.mButton, true);
-            break;
+    u32 kToggle = hidKeysDown(CONTROLLER_P1_AUTO);
 
-        case eEvent_MouseLeftDown:
-            mMousePosition = Event.mPosition;
-            mMouseButtons |= 1;
-            break;
+    if(kDown & KEY_A) {
+        JoyButtonA = 1;
+	}
+    else
+    {
+        JoyButtonA = 0;
+    }
 
-        case eEvent_MouseRightDown:
-            mMousePosition = Event.mPosition;
-            mMouseButtons |= 2;
-            break;
+    if(kDown & KEY_B) {
+        JoyButtonB = 1;
+	}
+    else
+    {
+        JoyButtonB = 0;
+    }
 
-        case eEvent_MouseLeftUp:
-            mMousePosition = Event.mPosition;
-            mMouseButtons &= ~1;
-            break;
+    if(kDown & KEY_Y) {
+        JoyButtonY = 1;
+		speed = 32;
+	}
+    else
+    {
+        JoyButtonY = 0;
+	    speed = 16;
+    }
 
-        case eEvent_MouseRightUp:
-            mMousePosition = Event.mPosition;
-            mMouseButtons &= ~2;
-            break;
+    if(kDown & KEY_X) {
+		JoyButtonX = 1;
+	}
+    else
+    {
+	    JoyButtonX = 0;
+    }
 
-        case eEvent_MouseMove:
-            mMousePosition = Event.mPosition;
-            break;
+    if(kToggle & KEY_X) {
+		JoyButtonXToggle = 1;
+	}
+    else
+    {
+	    JoyButtonXToggle = 0;
+    }
 
-        case eEvent_None:
-        case eEvent_MouseWheelUp:
-        case eEvent_MouseWheelDown:
-            break;
 
-        case eEvent_Quit:
-            Exit(0);
-            break;
+    if(kDown & KEY_DUP) {
+		JoyButtonUp = 1;
+	}
+    else
+    {
+        JoyButtonUp = 0;
+    }
+
+    if(kDown & KEY_DDOWN) {
+		JoyButtonDown = 1;
+	}
+    else
+    {
+        JoyButtonDown = 0;
+    }
+
+
+    if(kDown & KEY_DLEFT) {
+		JoyButtonLeft = 1;
+	}
+    else
+    {
+        JoyButtonLeft = 0;
+    }
+
+    if(kDown & KEY_DRIGHT) {
+		JoyButtonRight = 1;
+	}
+    else
+    {
+        JoyButtonRight = 0;
+    }
+
+    if(kDown & KEY_PLUS) {
+		JoyButtonPlus = 1;
+	}
+    else
+    {
+        JoyButtonPlus = 0;
+    }
+
+    if(kToggle & KEY_PLUS) {
+		JoyButtonPlusToggle = 1;
+	}
+    else
+    {
+        JoyButtonPlusToggle = 0;
+    }
+
+    if(kDown & KEY_L) {
+		JoyButtonL = 1;
+	}
+    else
+    {
+        JoyButtonL = 0;
+    }
+
+    if(kDown & KEY_R) {
+		JoyButtonR = 1;
+	}
+    else
+    {
+        JoyButtonR = 0;
+    }
+
+    if(kToggle & KEY_L) {
+		JoyButtonLToggle = 1;
+	}
+    else
+    {
+        JoyButtonLToggle = 0;
+    }
+
+    if(kToggle & KEY_R) {
+		JoyButtonRToggle = 1;
+	}
+    else
+    {
+        JoyButtonRToggle = 0;
+    }
+
+    if(kDown & KEY_ZL) {
+		JoyButtonZL = 1;
+	}
+    else
+    {
+        JoyButtonZL = 0;
+    }
+
+    if(kDown & KEY_ZR) {
+		JoyButtonZR = 1;
+	}
+    else
+    {
+        JoyButtonZR = 0;
+    }
+
+    if(kDown & KEY_MINUS) {
+		JoyButtonMinus = 1;
+	}
+    else
+    {
+        JoyButtonMinus = 0;
+    }
+
+    if(kToggle & KEY_MINUS) {
+		JoyButtonMinusToggle = 1;
+	}
+    else
+    {
+        JoyButtonMinusToggle = 0;
+    }
+
+    if(JoyButtonA || JoyButtonZR)
+    {
+        mMouseButtons |= 1;
+    }
+    else
+    {
+        mMouseButtons &= ~1;
+    }
+    if(JoyButtonB || JoyButtonZL)
+    {
+        mMouseButtons |= 2;
+    }
+    else
+    {
+        mMouseButtons &= ~2;
+    }
+    if(JoyButtonUp)
+    {
+        mMousePosition.mY -= speed;
+    }
+    if(JoyButtonDown)
+    {
+        mMousePosition.mY += speed;
+    }
+    if(JoyButtonLeft)
+    {
+        mMousePosition.mX -= speed;
+    }
+    if(JoyButtonRight)
+    {
+        mMousePosition.mX += speed;
+    }
+    if(JoyButtonPlus && JoyButtonMinus)
+    {
+        mMission_Aborted = true;
+    }
+    if(JoyButtonLToggle && JoyButtonMinus)
+    {
+        mWindow->WindowDecrease();
+    }
+    if(JoyButtonRToggle && JoyButtonMinus)
+    {
+        mWindow->WindowIncrease();
+    }
+
+    if (mMission_In_Progress && !mMission_ShowMapOverview) {
+
+        if(JoyButtonPlusToggle && !JoyButtonMinus)
+        {
+            mMission_Paused = ~mMission_Paused;
+        }
+        if(JoyButtonXToggle)
+        {
+            ++mSquad_SwitchWeapon;
+        }
+        if(JoyButtonMinusToggle && !JoyButtonPlus)
+        {
+            if ((mMission_Finished == 0) && !mMission_Paused)
+                mMission_ShowMapOverview = -1;
         }
 
     }
 
-    mEvents.clear();
+    JoystickPosition pos_left, pos_right;
+
+    //Read the joysticks' position
+    hidJoystickRead(&pos_left, CONTROLLER_P1_AUTO, JOYSTICK_LEFT);
+    hidJoystickRead(&pos_right, CONTROLLER_P1_AUTO, JOYSTICK_RIGHT);
+
+    //Print the joysticks' position
+    //printf("Left Joy X,Y: %d, %d\n", pos_left.dx, pos_left.dy);
+
+    int JOYSTICK_DEAD_ZONE = 4000;
+
+    if( pos_left.dx < -JOYSTICK_DEAD_ZONE || pos_left.dx > JOYSTICK_DEAD_ZONE  )
+    {
+        mMousePosition.mX += floor((float)((float)pos_left.dx/(float)32767)*(float)speed);
+    }
+    if( pos_left.dy < -JOYSTICK_DEAD_ZONE || pos_left.dy > JOYSTICK_DEAD_ZONE  )
+    {
+        mMousePosition.mY -= floor((float)((float)pos_left.dy/(float)32767)*(float)speed);
+    }
+
+    unsigned int width = (mWindow->GetWindowSize().mWidth)-16;
+    unsigned int height = (mWindow->GetWindowSize().mHeight)-16;
+
+    if(mMousePosition.mX < 0) mMousePosition.mX = 0;
+    if(mMousePosition.mX > width) mMousePosition.mX = width;
+    if(mMousePosition.mY < 0) mMousePosition.mY = 0;
+    if(mMousePosition.mY > height) mMousePosition.mY = height;
+
 }
 
 void cFodder::keyProcess(uint8 pKeyCode, bool pPressed) {
@@ -3247,7 +3459,9 @@ void cFodder::VersionLoad(const sVersion* pVersion) {
         mGraphics = new cGraphics_PC();
 
         if (mVersionCurrent->mGame == eGame::CF1)
+        {
             mSound = new cSound_PC();
+        }
 
         if (mVersionCurrent->mGame == eGame::CF2)
             mSound = new cSound_PC2();
@@ -3279,27 +3493,21 @@ void cFodder::VersionLoad(const sVersion* pVersion) {
 
 void cFodder::Prepare() {
     FindFodderVersions();
-
     if (g_AvailableDataVersions.empty()) {
-        std::cout << "No data files found\n";
+        printf("No data files found \n");
         exit(1);
     }
 
     mWindow->InitWindow("Open Fodder");
-
     tool_RandomSeed();
-
     mTile_BaseBlk = tSharedBuffer();
     mTile_SubBlk = tSharedBuffer();
-
     mMap = tSharedBuffer();
-
     mSidebar_Back_Buffer = (uint16*) new uint8[0x4000];
     mSidebar_Screen_Buffer = (uint16*) new uint8[0x4000];
     mSidebar_Screen_BufferPtr = mSidebar_Screen_Buffer;
 
     Briefing_Set_Render_1_Mode_On();
-
     mSurface = new cSurface(352, 364);
 }
 
@@ -3558,7 +3766,7 @@ void cFodder::Sound_Play(sSprite* pSprite, int16 pSoundEffect, int16 pData8) {
     Map_Get_Distance_BetweenPoints_Within_640(X, Y, pData8, DataC);
 
     int Volume = 40;
-    Volume -= (X / 16);
+    Volume -= (float)((float)X / (float)16);
 
     if (Volume <= 0)
         return;
@@ -3890,13 +4098,11 @@ static std::vector<unsigned char> mCampaignSelectMap_AF = {
 
 std::string cFodder::Campaign_Select_File(const char* pTitle, const char* pSubTitle, const char* pPath, const char* pType, eDataType pData) {
     mCampaignList = GetAvailableVersions();
-
     mMission_Aborted = false;
     mGUI_SaveLoadAction = 0;
 
     {
         auto Files = local_DirectoryList(local_PathGenerate("", pPath, pData), pType);
-
         // Sort files alphabetical
         std::sort(Files.begin(), Files.end(), [](std::string& pLeft, std::string& pRight) {
             return pLeft < pRight;
@@ -3929,7 +4135,6 @@ std::string cFodder::Campaign_Select_File(const char* pTitle, const char* pSubTi
     }
 
     Campaign_Select_Sprite_Prepare();
-
     do {
 
         Campaign_Select_File_Loop(pTitle, pSubTitle);
@@ -3948,7 +4153,6 @@ std::string cFodder::GUI_Select_File(const char* pTitle, const char* pPath, cons
     mGUI_SaveLoadAction = 0;
 
     mGraphics->SetActiveSpriteSheet(eGFX_RECRUIT);
-
     auto Files = local_DirectoryList(local_PathGenerate("", pPath, pData), pType);
     std::vector<sSavedGame> SaveFiles;
 
@@ -3957,7 +4161,6 @@ std::string cFodder::GUI_Select_File(const char* pTitle, const char* pPath, cons
         SaveFiles = Game_Load_Filter(Files);
         Files.clear();
     }
-
     mGUI_Select_File_CurrentIndex = 0;
     mGUI_Select_File_Count = (SaveFiles.size() == 0 ? (int16)Files.size() : (int16)SaveFiles.size());
     mGUI_Select_File_ShownItems = VERSION_BASED(4, 5);
@@ -4021,23 +4224,15 @@ std::string cFodder::GUI_Select_File(const char* pTitle, const char* pPath, cons
 
 void cFodder::Campaign_Selection() {
     mMission_Complete = 0;
-
     Mission_Memory_Clear();
     Game_ClearVariables();
     Map_Clear_Destroy_Tiles();
-
     Image_FadeOut();
-
     mGraphics->PaletteSet();
-
     mMouseSpriteNew = eSprite_pStuff_Mouse_Target;
-
     mGraphics->SetActiveSpriteSheet(eGFX_BRIEFING);
-
     mCustom_Mode = eCustomMode_None;
-
     std::string CampaignFile = Campaign_Select_File("OPEN FODDER", "SELECT CAMPAIGN", "", "*.ofc", eDataType::eCampaign);
-
     // Exit Pressed?
     if (mGUI_SaveLoadAction == 1 || !CampaignFile.size()) {
 
@@ -4193,7 +4388,6 @@ void cFodder::Campaign_Select_File_Loop(const char* pTitle, const char* pSubTitl
     mDemo_ExitMenu = 0;
 
     Camera_Reset();
-
     int16 Timedown = 0;
     do {
         Sprite_Frame_Modifier_Update();
@@ -10209,7 +10403,6 @@ void cFodder::GUI_Select_File_Loop(bool pShowCursor) {
         Mouse_Setup();
     }
     mGUI_SaveLoadAction = 0;
-
     mImageFaded = -1;
     mGraphics->PaletteSet();
 
@@ -10250,7 +10443,6 @@ void cFodder::GUI_Select_File_Loop(bool pShowCursor) {
     } while (mGUI_SaveLoadAction <= 0);
 
     mMission_Aborted = false;
-
     if (mGUI_SaveLoadAction == 3)
         return;
 
@@ -10303,7 +10495,8 @@ void cFodder::Game_Save() {
 
     GUI_Element_Reset();
 
-    Recruit_Render_Text("TYPE A SAVE NAME IN", 0x32);
+    Recruit_Render_Text("TYPE A SAVE NAME IN AND", 0x1E);
+    Recruit_Render_Text("PRESS PLUS TO SAVE", 0x32);
 
     GUI_Button_Draw("EXIT", 0xA0);
     GUI_Button_Setup(&cFodder::GUI_Button_Load_Exit);
@@ -10311,23 +10504,17 @@ void cFodder::Game_Save() {
     mGUI_Select_File_String_Input_Callback = &cFodder::String_Input_Print;
     GUI_Select_File_Loop(true);
     mGUI_Select_File_String_Input_Callback = 0;
-
     if (mGUI_SaveLoadAction != 2) {
         mGUI_SaveLoadAction = 1;
         return;
     }
-
     mInputString[mInputString_Position + 0] = 0;
     std::string SaveGameName = mInputString;
-
-    auto now = std::chrono::system_clock::now();
-    auto in_time_t = std::chrono::system_clock::to_time_t(now);
-
-    std::string SaveFilename = std::to_string(in_time_t);
+    /*auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);*/
+    std::string SaveFilename = std::to_string(time(NULL));
     SaveFilename += ".ofg";
-
     std::string Filename = local_PathGenerate(SaveFilename, "", eDataType::eSave);
-
     std::ofstream outfile(Filename, std::ofstream::binary);
 
     // Copy from mGame_Data.mMapNumber to mMission_Troops_SpritePtrs
@@ -10379,11 +10566,12 @@ void cFodder::String_Input_Print(int16 pPosY) {
     char* Data24;
 
     Recruit_Render_Text(mInputString, pPosY);
-
+    
     int16 Data0 = mKeyCodeAscii;
     if (Data0 == 0x0D && mInputString_Position)
+    {
         mGUI_SaveLoadAction = 2;
-
+    }
     if (Data0 == 8)
         goto loc_2E675;
 
@@ -10401,7 +10589,6 @@ loc_2E636:;
     Data4 = mInputString_Position;
     if (Data4 >= 8)
         goto loc_2E6A4;
-
     Data24 = mInputString;
     Data24 += Data4;
     *Data24 = (char)Data0;
@@ -10426,7 +10613,6 @@ loc_2E6A4:;
 
 void cFodder::String_Input_Check() {
     char* Data20 = mInputString;
-
     int16 Data0 = mInputString_Position;
     if (mKeyCodeAscii != 0x0D) {
         byte_44AC0 &= 0x3F;
@@ -10442,8 +10628,85 @@ loc_2E6EA:;
     Data20[Data0 + 1] = -1;
 }
 
-void cFodder::GUI_Input_CheckKey() {
+void cFodder::Print_OSK(const char* pText, const size_t pPosX, const size_t pPosY) {
 
+	//String_CalculateWidth(pPosX, mFont_Recruit_Width, pText);
+	String_Print(mFont_Recruit_Width, 0x0D, pPosX, pPosY, pText);
+}
+
+void cFodder::GUI_Input_CheckKey() {
+    
+    char* numbers = "0123456789";
+    char* alpha = "ABCDEFGHIJKLMNOPQRSTUVWYXZ";
+    int numberslength = 10;
+	int alphalength = 26;
+	char buffer[100];
+    char clicktest[50];
+	int MouseXMenu = mouse_Pos_Column + 32;
+	int MouseYMenu = mouse_Pos_Row;
+	char test[100];
+    for (int i = 0; i < numberslength; i++)
+	{
+		sprintf(buffer, "%c", numbers[i]);
+		Print_OSK(buffer, 1+(i*12), 170);
+	}
+	for (int i = 0; i < alphalength; i++)
+	{
+		sprintf(buffer, "%c", alpha[i]);
+		Print_OSK(buffer, 1+(i*12), 200);
+	}
+    /*sprintf(clicktest, "%d", mouse_Button_Status);
+    Print_OSK(clicktest, 20, 100);
+    sprintf(buffer, "X %d Y %d", MouseXMenu, MouseYMenu);
+	Print_OSK(buffer, 0, 0);*/
+    //mInputString
+    if (JoyButtonPlus)
+    {
+        //Print_OSK(buffer, 0, 20);
+        mKeyCodeAscii = 0x0D;
+        return;
+    }
+    if (JoyButtonB && backspaceOSK == 0)
+    {
+        //Print_OSK(buffer, 0, 20);
+        mKeyCodeAscii = 8;
+        backspaceOSK = 1;
+        return;
+    }
+    if(!JoyButtonB)
+    {
+        backspaceOSK = 0;
+    }
+    if ( (MouseXMenu > 1 && MouseXMenu < 121 && MouseYMenu > 168 && MouseYMenu < 193) )
+	{
+		int testlol = floor((float)(MouseXMenu - 1) / (float)12);
+		sprintf(buffer, "%c", numbers[testlol]);
+		Print_OSK(buffer, 200, 160);
+		if (mButtonPressLeft && clickedOSK == 0)
+		{
+			mKeyCodeAscii = numbers[testlol];
+            clickedOSK = 1;
+			return;
+		}
+	}
+	if ( (MouseXMenu > 1 && MouseXMenu < 313 && MouseYMenu > 198 && MouseYMenu < 223) )
+	{
+		int testlol = floor((float)(MouseXMenu - 1) / (float)12);
+		sprintf(buffer, "%c", alpha[testlol]);
+		Print_OSK(buffer, 200, 160);
+		if (mButtonPressLeft && clickedOSK == 0)
+		{
+			mKeyCodeAscii = alpha[testlol];
+            clickedOSK = 1;
+			return;
+		}
+	}
+
+    if(!mButtonPressLeft)
+    {
+        clickedOSK = 0;
+    }
+    /*
     if (mKeyCode != mInput_LastKey) {
         mInput_LastKey = mKeyCode;
 
@@ -10466,7 +10729,7 @@ void cFodder::GUI_Input_CheckKey() {
 
             return;
         }
-    }
+    }*/
 
     mKeyCodeAscii = 0;
 }
@@ -10534,7 +10797,6 @@ std::vector<sSavedGame> cFodder::Game_Load_Filter(const std::vector<std::string>
     for (auto& CurrentFile : pFiles) {
 
         std::string Filename = local_PathGenerate(CurrentFile, "", eDataType::eSave);
-
         // Load the save game
         std::ifstream SaveFile(Filename, std::ios::binary);
         if (SaveFile.is_open()) {
@@ -15246,7 +15508,7 @@ void cFodder::Sprite_Handle_Indigenous_Invisible(sSprite* pSprite) {
      seg004:4A78 C4 36 20 00                       les     si, ds:20h
     seg004:4A7C 26 C7 44 22 02 00                 mov     word ptr es:[si+22h], 2
     seg004:4A82 C4 36 20 00                       les     si, ds:20h
-    seg004:4A86 26 C7 44 08 D0 00                 mov     word ptr es:[si+8], 0D0h ; 'ð'
+    seg004:4A86 26 C7 44 08 D0 00                 mov     word ptr es:[si+8], 0D0h ; 'ï¿½'
     */
 }
 
@@ -18005,23 +18267,20 @@ void cFodder::String_CalculateWidth(int32 pPosX, const uint8* pWidths, const cha
 }
 
 void cFodder::intro_LegionMessage() {
-    int16 Duration = 300;
+    int16 Duration = 150;
     bool DoBreak = false;
-
+    
     mSurface->clearBuffer();
     mGraphics->PaletteSet();
-
     mImageFaded = -1;
 
-    Intro_Print_String(mVersionCurrent->mIntroData[0].mText[0].mPosition, &mVersionCurrent->mIntroData[0].mText[0]);
-    Intro_Print_String(mVersionCurrent->mIntroData[0].mText[1].mPosition, &mVersionCurrent->mIntroData[0].mText[1]);
-    Intro_Print_String(mVersionCurrent->mIntroData[0].mText[2].mPosition, &mVersionCurrent->mIntroData[0].mText[2]);
-
+    Intro_Print_String(mIntroText_Holder[0].mText[0].mPosition, &mIntroText_Holder[0].mText[0]);
+    Intro_Print_String(mIntroText_Holder[0].mText[1].mPosition, &mIntroText_Holder[0].mText[1]);
+    Intro_Print_String(mIntroText_Holder[0].mText[2].mPosition, &mIntroText_Holder[0].mText[2]);
     while (mImageFaded == -1 || DoBreak == false) {
 
         if (mImageFaded)
             mImageFaded = mSurface->palette_FadeTowardNew();
-
         if (Duration > 1)
             --Duration;
         else {
@@ -18043,32 +18302,30 @@ int16 cFodder::intro_Play() {
     mGraphics->Load_Sprite_Font();
     mGraphics->SetActiveSpriteSheet(eGFX_Types::eGFX_FONT);
 
-    for (word_3B2CF = 1; mVersionCurrent->mIntroData[word_3B2CF].mImageNumber != 0; ++word_3B2CF) {
+    //Intro_Print_String(mIntroText_Holder[0].mText[0].mPosition, &mIntroText_Holder[0].mText[0]);
 
-        mIntro_PlayTextDuration = 0x288;
+    for (word_3B2CF = 1; mIntroText_Holder[word_3B2CF].mImageNumber != 0; ++word_3B2CF) {
 
+        mIntro_PlayTextDuration = 0x288/4;
         mSurface->palette_SetToBlack();
 
-        if (mVersionCurrent->mIntroData[word_3B2CF].mImageNumber == 0 && mVersionCurrent->mIntroData[word_3B2CF].mText == 0)
+        if (mIntroText_Holder[word_3B2CF].mImageNumber == 0 && mIntroText_Holder[word_3B2CF].mText == 0)
             break;
 
-        if (mVersionCurrent->mIntroData[word_3B2CF].mImageNumber != 0xFF) {
-
+        if (mIntroText_Holder[word_3B2CF].mImageNumber != 0xFF) {
             std::stringstream ImageName;
-            ImageName << (char)mVersionCurrent->mIntroData[word_3B2CF].mImageNumber;
+            ImageName << (char)mIntroText_Holder[word_3B2CF].mImageNumber;
 
             mGraphics->Load_And_Draw_Image(ImageName.str(), 0xD0);
         }
         else {
-            mIntro_PlayTextDuration = 0xAF;
+            mIntro_PlayTextDuration = 0xAF/4;
             mSurface->clearBuffer();
         }
-
         mGraphics->PaletteSet();
-        const sIntroString* IntroString = mVersionCurrent->mIntroData[word_3B2CF].mText;
+        const sIntroString* IntroString = mIntroText_Holder[word_3B2CF].mText;
         if (IntroString) {
             while (IntroString->mPosition) {
-
                 Intro_Print_String(IntroString->mPosition, IntroString);
                 ++IntroString;
             }
@@ -18078,10 +18335,8 @@ int16 cFodder::intro_Play() {
         int16 Duration = mIntro_PlayTextDuration;
         int16 Fade = -1;
         bool DoBreak = false;
-
         while (Fade == -1 || DoBreak == false) {
             --Duration;
-
             if (Duration) {
                 if (Fade)
                     Fade = mSurface->palette_FadeTowardNew();
@@ -18089,8 +18344,8 @@ int16 cFodder::intro_Play() {
                 Mouse_GetData();
                 if (mouse_Button_Status) {
 
-                    if (mVersionCurrent->mIntroData.size() >= 2)
-                        word_3B2CF = ((int16)mVersionCurrent->mIntroData.size()) - 2;
+                    if (mIntroText_Holder.size() >= 2)
+                        word_3B2CF = ((int16)mIntroText_Holder.size()) - 2;
 
                     mImage_Aborted = -1;
                     mSurface->paletteNew_SetToBlack();
@@ -18188,36 +18443,30 @@ void cFodder::intro() {
 
     if (mVersionCurrent->mPlatform == ePlatform::Amiga)
         mWindow->SetScreenSize(cDimension(320, 260));
-
     // Disabled: GOG CD Version doesn't require a manual check
     //  CopyProtection();
 
     mImage_Aborted = 0;
     mGraphics->Load_Sprite_Font();
-
     if (mSkipIntro)
         goto introDone;
 
     intro_Music_Play();
-
+    if (mVersionCurrent->isAmiga()) {
+        mIntroText_Holder = mIntroText_Amiga;
+    }
     if (mVersionCurrent->mGame == eGame::CF1)
         intro_LegionMessage();
-
-    if (ShowImage_ForDuration("cftitle", 0x1F8))
+    if (ShowImage_ForDuration("cftitle", 0x1F8/2))
         goto introDone;
-
     if (intro_Play())
         goto introDone;
-
-    if (ShowImage_ForDuration("virgpres", 0x2D0))
+    if (ShowImage_ForDuration("virgpres", 0x2D0/2))
         goto introDone;
-
-    if (ShowImage_ForDuration("sensprod", 0x2D0))
+    if (ShowImage_ForDuration("sensprod", 0x2D0/2))
         goto introDone;
-
-    if (ShowImage_ForDuration("cftitle", 0x318))
+    if (ShowImage_ForDuration("cftitle", 0x318/2))
         goto introDone;
-
 introDone:;
     mIntroDone = true;
     mSound->Music_Stop();
@@ -18330,7 +18579,7 @@ void cFodder::sleepLoop(int64 pMilliseconds) {
     uint64 TimeFinish = TimeStarted + pMilliseconds;
 
     do {
-        mWindow->EventCheck();
+        //mWindow->EventCheck();
 
         if (SDL_GetTicks() >= TimeFinish)
             break;
@@ -20093,7 +20342,6 @@ void cFodder::Recruit_CheckLoadSaveButtons() {
 
 void cFodder::Game_Setup(int16 pStartMap) {
     Game_ClearVariables();
-
     mIntroDone = false;
     mMission_Complete = 0;
     mGame_Data.mMapNumber = pStartMap;
@@ -20105,7 +20353,6 @@ void cFodder::Game_Setup(int16 pStartMap) {
     mGame_Data.mMissionNumber = 0;
 
     Mission_Phase_Next();
-
     mMission_TryAgain = -1;
 
     mGraphics->Load_pStuff();
@@ -20293,7 +20540,6 @@ Start:;
     mVersionDefault = 0;
     mVersionCurrent = 0;
     VersionLoad(g_AvailableDataVersions[0]);
-
     //Playground();
 
     // Play the intro
@@ -20310,9 +20556,8 @@ Start:;
 
     // Select campaign menu
     Campaign_Selection();
-
     // Exit pushed?
-    if (mGUI_SaveLoadAction == 1)
+    if (mGUI_SaveLoadAction == 1) // RETURN IF EXIT PUSHED
         return;
 
     if (mVersionCurrent->isDemo())
@@ -20323,16 +20568,15 @@ Start:;
 
     // Game Loop
     for (;;) {
-
         Game_Setup(pStartMap);
-
         if (Mission_Loop() == -1)
+        {
             goto Start;
+        }
     }
 }
 
 int16 cFodder::Mission_Loop() {
-
     //loc_1042E:;
     for (;;) {
 
@@ -20363,7 +20607,9 @@ int16 cFodder::Mission_Loop() {
         // Show the intro for retail releases
         if (!mVersionCurrent->isDemo()) {
             if (!mIntroDone)
+            {
                 intro();
+            }
         }
 
         //loc_10496

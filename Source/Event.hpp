@@ -21,17 +21,29 @@
  */
 
 enum eEventType {
-	eEvent_None				= 0,
-	eEvent_KeyDown			= 1,
-	eEvent_KeyUp			= 2,
-	eEvent_MouseMove		= 3,
-	eEvent_MouseLeftDown	= 4,
-	eEvent_MouseLeftUp		= 5,
-	eEvent_MouseRightDown	= 6,
-	eEvent_MouseRightUp		= 7,
-	eEvent_MouseWheelUp		= 8,
-	eEvent_MouseWheelDown	= 9,
-	eEvent_Quit				= 10
+	eEvent_None					= 0,
+	eEvent_KeyDown				= 1,
+	eEvent_KeyUp				= 2,
+	eEvent_MouseMove			= 3,
+	eEvent_MouseLeftDown		= 4,
+	eEvent_MouseLeftUp			= 5,
+	eEvent_MouseRightDown		= 6,
+	eEvent_MouseRightUp			= 7,
+	eEvent_MouseWheelUp			= 8,
+	eEvent_MouseWheelDown		= 9,
+	eEvent_JoyMove				= 10,
+	eEvent_JoyButtonUpPush		= 11,	
+	eEvent_JoyButtonDownPush	= 12,	
+	eEvent_JoyButtonLeftPush	= 13,	
+	eEvent_JoyButtonRightPush	= 14,
+	eEvent_JoyButtonUpRel		= 15,	
+	eEvent_JoyButtonDownRel		= 16,	
+	eEvent_JoyButtonLeftRel		= 17,	
+	eEvent_JoyButtonRightRel	= 18,
+	eEvent_JoyButtonPlusPush	= 19,
+	eEvent_JoyButtonYPush		= 20,
+	eEvent_JoyButtonYRel		= 21,
+	eEvent_Quit					= 22
 };
 
 class cEvent {
@@ -42,6 +54,9 @@ class cEvent {
 		unsigned int		mButtonCount;
 
 		cPosition			mPosition;
+
+		int					AxisX;
+		int					AxisY;
 
 	public:
 							cEvent( const eEventType& pType = eEvent_None );

@@ -20,6 +20,8 @@
  *
  */
 
+// AMIGA FILES WORK BEST http://www.whdownload.com/games/Pack-C-2007-01-30/CannonFodder_v1.0_0860.zip
+
 enum ePlatform {
 	PC		= 0,
 	Amiga	= 1

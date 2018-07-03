@@ -102,6 +102,27 @@ public:
 
     cPosition       mMousePosition;
     uint32          mMouseButtons;
+    int16           JoyButtonUp;
+    int16           JoyButtonDown;
+    int16           JoyButtonLeft;
+    int16           JoyButtonRight;
+    int16           JoyButtonA;
+    int16           JoyButtonB;
+    int16           JoyButtonX;
+    int16           JoyButtonXToggle;
+    int16           JoyButtonY;
+    int16           JoyButtonL;
+    int16           JoyButtonR;
+    int16           JoyButtonLToggle;
+    int16           JoyButtonRToggle;
+    int16           JoyButtonZL;
+    int16           JoyButtonZR;
+    int16           JoyButtonPlus;
+    int16           JoyButtonPlusToggle;
+    int16           JoyButtonMinus;
+    int16           JoyButtonMinusToggle;
+    int             JoyAxisX;
+    int             JoyAxisY;
 
     uint16          mMapWidth;
     uint16          mMapHeight;
@@ -1065,6 +1086,9 @@ public:
     std::string     GUI_Select_File(const char* pTitle, const char* pPath, const char* pType, eDataType pData = eData);
 
 
+    void            Print_OSK(const char* pText, const size_t pPosX, const size_t pPosY);
+    int             clickedOSK = 0;
+    int             backspaceOSK = 0;
     void            GUI_Input_CheckKey();
     void            GUI_Button_Load_Up();
     void            GUI_Button_Load_Down();

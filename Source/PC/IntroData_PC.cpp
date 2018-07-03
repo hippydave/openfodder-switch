@@ -20,9 +20,9 @@
  *
  */
 
-#include "Types.hpp"
+#include "../Types.hpp"
 #include <vector>
-#include "IntroData.hpp"
+#include "../IntroData.hpp"
 
 
 // Intro_0 has had +0x19 added to each string
@@ -191,3 +191,5 @@ std::vector< sIntroText > mIntroText_PC2 = {
 	{ 0x65, 0 },
 	{ 0, 0 }
 };
+
+std::vector< sIntroText > mIntroText_Holder = mIntroText_PC;

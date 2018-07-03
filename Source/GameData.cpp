@@ -291,7 +291,7 @@ bool sGameData::FromJson(const std::string& pJson) {
 		mMission_Troops_Available = LoadedData["mMission_Troops_Available"];
 
 	 } catch (std::exception Exception) {
-		 std::cout << "SaveGame JSON Parsing Error: " << Exception.what() << "\n";
+		 //std::cout << "SaveGame JSON Parsing Error: " << Exception.what() << "\n";
 		 return false;
 	}
 

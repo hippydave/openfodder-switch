@@ -24,8 +24,8 @@
 
 cWindow::cWindow() {
 
-	mOriginalResolution.mWidth = 320;
-	mOriginalResolution.mHeight = 200;
+	mOriginalResolution.mWidth = 1280;
+	mOriginalResolution.mHeight = 720;
 
 	mWindow_Multiplier = mWindow_MultiplierPrevious = 2;
 
@@ -37,6 +37,9 @@ cWindow::cWindow() {
 	mWindow = 0;
 
 	mRenderer = 0;
+
+	mMouseXNew = 0x7F;
+	mMouseYNew = 0x67;
 }
 
 cWindow::~cWindow() {
@@ -49,28 +52,34 @@ cWindow::~cWindow() {
 
 bool cWindow::InitWindow( const std::string& pWindowTitle ) {
 	
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0) {
-		std::cout << "Failed to initialise SDL\n";
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) != 0) {
+		printf("Failed to initialise SDL\n");
 		exit( 1 );
 		return false;
 	}
 	
     SetFullScreen();
-
-	mWindow = SDL_CreateWindow(pWindowTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, GetWindowSize().mWidth, GetWindowSize().mHeight, SDL_WINDOW_SHOWN );
+	mWindow = SDL_CreateWindow(pWindowTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, GetWindowSize().mWidth, GetWindowSize().mHeight, SDL_WINDOW_FULLSCREEN );
 	if (!mWindow) {
-		std::cout << "Failed to create window\n";
+		printf("Failed to create window\n");
 		exit( 1 );
 		return false;
 	}
-
-	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	mRenderer = SDL_CreateRenderer(mWindow, -1, 0);
 	if (!mRenderer) {
-		std::cout << "Failed to create rendered\n";
+		printf("Failed to create renderer\n");
 		exit( 1 );
 		return false;
 	}
 
+	for (int i = 0; i < 2; i++) {
+        if (SDL_JoystickOpen(i) == NULL) {
+            printf("SDL_JoystickOpen: %s\n", SDL_GetError());
+            SDL_Quit();
+            return -1;
+        }
+    }
+	
 	SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, 0 );
 	SetCursor();
 
@@ -81,24 +90,26 @@ bool cWindow::InitWindow( const std::string& pWindowTitle ) {
 
 	return true;
 }
-
+/*int JOYSTICK_DEAD_ZONE = 4000;
 void cWindow::EventCheck() {
 
 	SDL_Event SysEvent;
 	
+	
 	while (SDL_PollEvent( &SysEvent )) {
-
 		cEvent Event;
 
 		switch (SysEvent.type) {
 			case SDL_KEYDOWN:
 				Event.mType = eEvent_KeyDown;
 				Event.mButton = SysEvent.key.keysym.scancode;
+				printf("KEYDOWN");
 				break;
 
 			case SDL_KEYUP:
 				Event.mType = eEvent_KeyUp;
 				Event.mButton = SysEvent.key.keysym.scancode;
+				printf("KEYUP");
 				break;
 
 			case SDL_MOUSEMOTION:
@@ -143,6 +154,135 @@ void cWindow::EventCheck() {
 				Event.mPosition = cPosition( SysEvent.motion.x, SysEvent.motion.y );
 				Event.mButtonCount = SysEvent.button.clicks;
 				break;
+			
+			case SDL_JOYAXISMOTION:
+				Event.mType = eEvent_JoyMove;
+
+				if(SysEvent.jaxis.which == 0)
+				{
+					if(SysEvent.jaxis.axis == 0)
+					{
+						//Left of dead zone
+						if( SysEvent.jaxis.value < -JOYSTICK_DEAD_ZONE )
+						{
+							Event.AxisX = SysEvent.jaxis.value;
+						}
+						else if( SysEvent.jaxis.value > JOYSTICK_DEAD_ZONE )
+						{
+							Event.AxisX = SysEvent.jaxis.value;
+						}
+						else
+						{
+							Event.AxisX = 0;
+						}
+					}
+					else if(SysEvent.jaxis.axis == 1)
+					{
+						//Left of dead zone
+						if( SysEvent.jaxis.value < -JOYSTICK_DEAD_ZONE )
+						{
+							Event.AxisY = SysEvent.jaxis.value;
+						}
+						else if( SysEvent.jaxis.value > JOYSTICK_DEAD_ZONE )
+						{
+							Event.AxisY = SysEvent.jaxis.value;
+						}
+						else
+						{
+							Event.AxisY = 0;
+						}
+					}
+				}
+				break;
+
+			case SDL_JOYBUTTONDOWN:
+			// any button
+				//printf("Joystick %d button %d down\n",SysEvent.jbutton.which, SysEvent.jbutton.button);
+				//Event.mType = eEvent_JoyDown;
+				//Event.mButton = SysEvent.key.keysym.scancode;
+				//Event.mPosition = cPosition( mMouseXNew, mMouseYNew );
+				//Event.mPosition.mX += 16;
+				// seek for joystick #0 down (B)
+				// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L51
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 11) {
+					//EXIT done = 1;
+					Event.mType = eEvent_JoyButtonPlusPush;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 0) {
+					//EXIT done = 1;
+					Event.mType = eEvent_MouseLeftDown;
+					Event.mButton = 1;
+					//Event.mPosition = cPosition( mMouseXNew, mMouseYNew );
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 1) {
+					//EXIT done = 1;
+					Event.mType = eEvent_MouseRightDown;
+					Event.mButton = 3;
+					//Event.mPosition = cPosition( mMouseXNew, mMouseYNew );
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 13) {
+					Event.mType = eEvent_JoyButtonUpPush;
+					Event.mButton = SysEvent.key.keysym.scancode;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 15) {
+					Event.mType = eEvent_JoyButtonDownPush;
+					Event.mButton = SysEvent.key.keysym.scancode;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 12) {
+					Event.mType = eEvent_JoyButtonLeftPush;
+					Event.mButton = SysEvent.key.keysym.scancode;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 14) {
+					Event.mType = eEvent_JoyButtonRightPush;
+					Event.mButton = SysEvent.key.keysym.scancode;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 3) {
+					Event.mType = eEvent_JoyButtonYPush;
+					Event.mButton = SysEvent.key.keysym.scancode;
+				}
+				Event.mButtonCount = SysEvent.button.clicks;
+				//Event.mType = eEvent_JoyDownNEW; use again for more nbuttons
+				break;
+
+			case SDL_JOYBUTTONUP:
+			// any button
+				//printf("Joystick %d button %d down\n",SysEvent.jbutton.which, SysEvent.jbutton.button);
+				//Event.mType = eEvent_JoyDown;
+				//Event.mButton = SysEvent.key.keysym.scancode;
+				//Event.mPosition = cPosition( mMouseXNew, mMouseYNew );
+				//Event.mPosition.mX += 16;
+				// seek for joystick #0 down (B)
+				// https://github.com/devkitPro/SDL/blob/switch-sdl2/src/joystick/switch/SDL_sysjoystick.c#L51
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 0) {
+					Event.mType = eEvent_MouseLeftUp;
+					Event.mButton = 1;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 1) {
+					Event.mType = eEvent_MouseRightUp;
+					Event.mButton = 3;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 13) {
+					Event.mType = eEvent_JoyButtonUpRel;
+					Event.mButton = SysEvent.key.keysym.scancode;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 15) {
+					Event.mType = eEvent_JoyButtonDownRel;
+					Event.mButton = SysEvent.key.keysym.scancode;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 12) {
+					Event.mType = eEvent_JoyButtonLeftRel;
+					Event.mButton = SysEvent.key.keysym.scancode;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 14) {
+					Event.mType = eEvent_JoyButtonRightRel;
+					Event.mButton = SysEvent.key.keysym.scancode;
+				}
+				if (SysEvent.jbutton.which == 0 && SysEvent.jbutton.button == 3) {
+					Event.mType = eEvent_JoyButtonYRel;
+					Event.mButton = SysEvent.key.keysym.scancode;
+				}
+				Event.mButtonCount = SysEvent.button.clicks;
+				break;
 
 			case SDL_QUIT:
 				Event.mType = eEvent_Quit;
@@ -153,7 +293,7 @@ void cWindow::EventCheck() {
 			g_Fodder.EventAdd( Event );
 	}
 
-}
+}*/
 
 void cWindow::CalculateWindowSize() {
 	SDL_DisplayMode current;

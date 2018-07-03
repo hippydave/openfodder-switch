@@ -30,9 +30,13 @@
 #ifndef _OFED
 #ifndef _OFBOT
 int main(int argc, char *args[]) {
+
+	//consoleInit(NULL);
+	socketInitializeDefault();
+	nxlinkStdio();
+	printf("nxlink printf\n");
 	bool SkipIntro = false;
 	int16 MapNumber = 0;
-
 
 	if (argc > 1) {
 
@@ -43,14 +47,10 @@ int main(int argc, char *args[]) {
 			MapNumber = atoi( args[3] );
 		}
 	}
-
 	cFodder* Fodder = new cFodder(new cWindow(), SkipIntro);
-
 	Fodder->Prepare();
 	Fodder->Start( MapNumber );
-
-	delete Fodder;
-
+	//delete Fodder;
     return 0;
 
 }
@@ -128,15 +128,15 @@ std::string local_PathGenerate( const std::string& pFile, const std::string& pPa
 
 	switch (pDataType) {
 	case eData:
-		filePathFinal << "Data/";
+		filePathFinal << "/switch/openfodder/Data/";
 		break;
 
 	case eSave:
-		filePathFinal << "Saves/";
+		filePathFinal << "/switch/openfodder/Saves/";
 		break;
 
 	case eCampaign:
-		filePathFinal << "Campaigns/";
+		filePathFinal << "/switch/openfodder/Campaigns/";
 		break;
 
 	case eNone:
@@ -195,7 +195,6 @@ tSharedBuffer local_FileRead( const std::string& pFile, const std::string& pPath
 	std::string finalPath;
 	
 	finalPath = local_PathGenerate(pFile, pPath, pDataType );
-
 	// Attempt to open the file
  	fileStream = new std::ifstream ( finalPath.c_str(), std::ios::binary );
 	if (fileStream->is_open() != false) {
@@ -325,48 +324,50 @@ std::vector<std::string> local_DirectoryList( const std::string& pPath, const st
 #else
 #include <dirent.h>
 std::string findType;
+int fileCount = 0;
 
 int file_select(const struct dirent *entry) {
 	std::string name = entry->d_name;
-
 	transform( name.begin(), name.end(), name.begin(), ::toupper );
    	
 	if( name.find( findType ) == std::string::npos )
 		return false;
 	
+	fileCount++;
 	return true;
 }
-
 std::vector<std::string> local_DirectoryList( const std::string& pPath, const std::string& pExtension) {
+
 	struct dirent		**directFiles;
 	std::vector<std::string>		  results;
 
 	// Build the file path
 	std::stringstream finalPath;
 
-	finalPath << pPath << "/";
+	finalPath << pPath;
 
 	findType = pExtension;
-		
-    transform( findType.begin(), findType.end(), findType.begin(), ::toupper);
 
-	int count = scandir(finalPath.str().c_str(), (dirent***) &directFiles, file_select, 0);
+	DIR *dir;
+	struct dirent *ent;
+	if ((dir = opendir (finalPath.str().c_str())) != NULL)
+	{
+		/* print all the files and directories within directory */
+		while ((ent = readdir (dir)) != NULL)
+		{
+			results.push_back( std::string( ent->d_name ) );
+		}
+		closedir (dir);
+	}
+	else
+	{
+		/* could not open directory */
+		printf ("Error opening directory.\n");
+		//return;
+	}
+
+    return results;
 	
-	for( int i = 0; i < count; ++i ) {
-
-		results.push_back( std::string( directFiles[i]->d_name ) );
-	}
-
-	transform( findType.begin(), findType.end(), findType.begin(), ::tolower );
-
-	count = scandir( finalPath.str().c_str(), (dirent***)&directFiles, file_select, 0 );
-
-	for (int i = 0; i < count; ++i) {
-
-		results.push_back( std::string( directFiles[i]->d_name ) );
-	}
-
-	return results;
 }
 
 #endif

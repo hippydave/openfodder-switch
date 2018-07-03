@@ -1,8 +1,68 @@
-# Open Fodder
-[![Build Status](https://api.travis-ci.org/OpenFodder/openfodder.svg?branch=master)](https://travis-ci.org/OpenFodder/openfodder)
+# Open Fodder for Nintendo Switch
 
-![image](https://user-images.githubusercontent.com/1327406/35489590-9f823528-04ec-11e8-9f03-6d18b8d9b581.png)
+Port of Open Fodder to Nintendo Switch.
 
+## Screenshots
+
+![Screenshot1](https://github.com/keeganatorr/openfodder-switch/blob/master/screen1.jpg)
+![Screenshot2](https://github.com/keeganatorr/openfodder-switch/blob/master/screen2.jpg)
+![Screenshot3](https://github.com/keeganatorr/openfodder-switch/blob/master/screen3.jpg)
+
+## Controls
+
+| Keys        | Controls           |
+| ------------- |:-------------:|
+| D-Pad or Analog | Move Mouse |
+| A or ZR | Click |
+| B or ZL | Fire |
+| X | Speed up cursor |
+| Y | Swap alt weapon |
+| Click+Fire | Use alt weapon |
+| Plus | Pause |
+| Minus | Show map preview |
+| Minus+L | Decrease window size |
+| Minus+R | Increase window size |
+| Plus+Minus | Go back |
+
+### Setup
+
+Requires a copy of Cannon Fodder (DOS or Amiga, Amiga files work better)
+
+```
+[DOS]: https://www.gog.com/game/cannon_fodder
+
+[Amiga]: http://www.whdownload.com
+```
+
+Download this archive `https://github.com/OpenFodder/data/releases/download/1.4/OpenFodder.zip`.
+And extract the contents of `OpenFodder/` to `/switch/openfodder/` on your Nintendo Switch SD card.
+
+* [DOS] Copy 'CF_ENG.DAT' from the CD (or the GOG install destination) to the `/switch/openfodder/Data/Dos_CD` folder.
+* [Amiga] Copy the contents of 'cf_data'  into the `/switch/openfodder/Data/Amiga` directory.
+* Copy `openfodder.nro` to `/switch/openfodder/` and boot the game through the homebrew launcher.
+
+## Bugs
+
+* DOS sound effects dont work.
+* DOS has small graphical issues where the screen trys to scroll past the top left when you reach that area in a mission.
+
+## Compiling
+
+Install DEVKITPRO.
+
+Run make
+
+```
+make -j8
+```
+
+## Special Thanks
+
+* DEVKITPRO
+* The developers of Open Fodder
+* Sensible Software
+
+## Original Readme
 #### About
 
 Cannon Fodder is an action-strategy shoot 'em up game developed by Sensible Software and published by Virgin Interactive.

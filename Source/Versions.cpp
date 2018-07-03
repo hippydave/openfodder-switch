@@ -813,7 +813,7 @@ std::vector<std::string> GetAvailableVersions() {
 void FindFodderVersions() {
 
     g_AvailableDataVersions.clear();
-
+    int count = 0;
     // Loop all known versions
     for (auto& KnownVersion : Versions) {
         int16 FileMatches = 0;
@@ -821,12 +821,11 @@ void FindFodderVersions() {
         // Loop each file in this version
         for (auto& File : KnownVersion.mFiles) {
             std::string MD5 = local_FileMD5(File.mName, KnownVersion.mDataPath);
-
+            count++;
             if (MD5 != File.mChecksum) {
 
                 if (MD5.length() == 0) {
-                    //std::cout << KnownVersion.mName << ": " << KnownVersion.mFiles[FileNo].mName;
-                    //std::cout << " File not found\n";
+                    //printf("%s File not found\n",KnownVersion.mName);
                 }
                 else {
                     std::cout << KnownVersion.mName << ": " << File.mName;
@@ -835,7 +834,9 @@ void FindFodderVersions() {
                 }
             }
             else
+            {
                 ++FileMatches;
+            }
 
         }
 
@@ -849,6 +850,7 @@ void FindFodderVersions() {
                 if (Version->isRetail() && Version->mPlatform == KnownVersion.mPlatform) {
 
                     g_AvailableDataVersions.push_back(&KnownVersion);
+                    
                     break;
                 }
             }

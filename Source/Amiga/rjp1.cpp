@@ -20,10 +20,10 @@
  *
  */
 
-#include "stdafx.hpp"
+#include "../stdafx.hpp"
 
-#include "Amiga/paula.hpp"
-#include "Amiga/rjp1.hpp"
+#include "paula.hpp"
+#include "rjp1.hpp"
 
 namespace Audio {
 

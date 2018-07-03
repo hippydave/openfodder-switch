@@ -20,7 +20,7 @@
 *
 */
 
-#include "stdafx.hpp"
+#include "../stdafx.hpp"
 
 // Amiga Format Phases
 const std::vector< size_t > mAmigaFormat_MissionPhaseTable = {

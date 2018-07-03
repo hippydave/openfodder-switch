@@ -48,7 +48,7 @@ class cWindow : public cSingleton<cWindow> {
 
 		bool				CanChangeToMultiplier( int pNewMultiplier );
 
-		virtual void		EventCheck();
+		//virtual void		EventCheck();
 		virtual void		FrameEnd();
 
 		virtual bool		InitWindow( const std::string& pWindowTitle );
@@ -75,4 +75,7 @@ class cWindow : public cSingleton<cWindow> {
 		const cDimension	GetWindowSize() const;
 		const cDimension	GetScreenSize() const { return mScreenSize; }
 		const bool			GetWindowMode() const { return mWindowMode; }
+
+		int16 mMouseXNew = 0;
+		int16 mMouseYNew = 0;
 };

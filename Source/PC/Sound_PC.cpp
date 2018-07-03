@@ -20,8 +20,8 @@
  *
  */
 
-#include "stdafx.hpp"
-#include "PC/VocTable.hpp"
+#include "../stdafx.hpp"
+#include "VocTable.hpp"
 
 void Mixer_ChannelFinished(int32 pChannel) {
 
@@ -118,13 +118,20 @@ void cSound_PC::Sound_Play( int16 pTileset, int16 pSoundEffect, int16 pVolume ) 
 	auto eax = word_42316[pTileset][pSoundEffect];
 	if (!eax || !eax->size() || mSound == false )
 		return;
-
+	// FIXTHIS
 	SDL_RWops *rw = SDL_RWFromMem( eax->data(), (int) eax->size() );
-
 	Playing.mCurrentChunk = Mix_LoadWAV_RW( rw, 1 );
+	/*if(!Playing.mCurrentChunk) {
+    	printf("Mix_LoadWAV_RW: %s\n", Mix_GetError());
+    // handle error
+	}*/
 	Playing.mChannel = Mix_PlayChannel( -1, Playing.mCurrentChunk , 0 );
+	/*if(Playing.mChannel==-1) {
+    	printf("Mix_PlayChannel: %s\n",Mix_GetError());
+    // may be critical error, or maybe just no channels were free.
+    // you could allocated another channel in that case...
+	}*/
 	Mix_Volume(Playing.mChannel, pVolume );
-
 	if (Playing.mChannel == -1) {
 		Mix_FreeChunk( Playing.mCurrentChunk );
 		return;
@@ -138,7 +145,7 @@ void cSound_PC::Music_PlayFile( const char* pFilename ) {
 	if (mSound == false)
 		return;
 
-	std::string Filename = "Data/WAV/";
+	std::string Filename = "/switch/openfodder/Data/WAV/";
 	Filename.append( pFilename );
 	Filename.append( ".wav" );
 

@@ -52,7 +52,7 @@ inline int16 fracToInt(frac_t value) { return value >> FRAC_BITS; }
 #ifndef AUDIO_MODS_PAULA_H
 #define AUDIO_MODS_PAULA_H
 
-#include "Amiga/audiostream.hpp"
+#include "audiostream.hpp"
 
 namespace Audio {
 

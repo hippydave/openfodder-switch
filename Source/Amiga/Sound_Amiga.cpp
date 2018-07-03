@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdafx.hpp"
+#include "../stdafx.hpp"
 
 const sSoundData Tracks[] = {
 	{ "JON.SNG", "JON.INS" },
@@ -163,7 +163,6 @@ int16 cSound_Amiga::Track_Load( sSound* pSound, int16 pTrack ) {
 void cSound_Amiga::Sound_Play( int16 pTileset, int16 pSoundEffect, int16 pVolume ) {
 
 	Track_Load( &mSound_Sfx, pTileset + 0x32 );
-
 	if (SDL_LockMutex( mLock ) == 0) {
 		if (mSound_Sfx.mCurrentMusicSongData && mSound_Sfx.mCurrentMusicInstrumentData) {
 			Audio::AudioStream* Sfx = Audio::makeRjp1Stream( mSound_Sfx.mCurrentMusicSongData->data(), mSound_Sfx.mCurrentMusicInstrumentData->data(), mSound_Sfx.mCurrentMusicInstrumentData->size(), -pSoundEffect );

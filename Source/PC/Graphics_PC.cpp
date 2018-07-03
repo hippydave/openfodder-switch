@@ -20,8 +20,8 @@
  *
  */
 
-#include "stdafx.hpp"
-#include "PC/SpriteData_PC.hpp"
+#include "../stdafx.hpp"
+#include "SpriteData_PC.hpp"
 
 cGraphics_PC::~cGraphics_PC() {
 

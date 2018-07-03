@@ -20,7 +20,7 @@
 *
 */
 
-#include "stdafx.hpp"
+#include "../stdafx.hpp"
 
 /** Retail 2 Mission Phases **/
 const std::vector< size_t > mRetail2_MissionPhaseTable = {

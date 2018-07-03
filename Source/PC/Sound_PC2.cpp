@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdafx.hpp"
+#include "../stdafx.hpp"
 
 void Mixer_ChannelFinished2(int32 pChannel) {
 

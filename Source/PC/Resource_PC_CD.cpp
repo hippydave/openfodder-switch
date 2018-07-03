@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdafx.hpp"
+#include "../stdafx.hpp"
 
 #include <algorithm>
 
@@ -280,7 +280,6 @@ tSharedBuffer cResource_PC_CD::fileGet( std::string pFilename ) {
 		}
 	}
 
-	std::cout << "File " << pFilename << " Not Found!\n";
 	exit( 1 );
 	return File;
 }

@@ -20,8 +20,8 @@
  *
  */
 
-#include "stdafx.hpp"
-#include "Amiga/dernc.hpp"
+#include "../stdafx.hpp"
+#include "dernc.hpp"
 
 cResource_Amiga_File::cResource_Amiga_File( std::string pDataPath  ) : cResources(pDataPath) {
 
@@ -35,7 +35,7 @@ tSharedBuffer cResource_Amiga_File::fileGet( std::string pFilename ) {
 
 	auto File = cResources::fileGet( pFilename );
 	if (!File->size()) {
-		//std::cout << "File " << pFilename << " Not Found!\n";
+		printf("File %s Not Found!\n",pFilename.c_str());
 		//exit( 1 );
 		return File;
 	}

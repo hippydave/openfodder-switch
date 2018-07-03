@@ -20,9 +20,9 @@
  *
  */
 
-#include "Types.hpp"
+#include "../Types.hpp"
 #include <vector>
-#include "IntroData.hpp"
+#include "../IntroData.hpp"
 
 
 const sIntroString mIntro_0[] = {
