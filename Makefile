@@ -40,7 +40,7 @@ EXEFS_SRC	:=	exefs_src
 
 APP_TITLE	:= openfodder
 APP_AUTHOR 	:= Keeganator
-APP_VERSION := 1.4-switch
+APP_VERSION := 1.4.1-switch
 ICON		:= icon.jpg
 
 #---------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ LDFLAGS	=	-specs=$(DEVKITPRO)/libnx/switch.specs -g $(ARCH) -Wl,-Map,$(notdir $*
 
 #LIBS	:= -lSDL -lSDL_image -ljpeg -lpng -lz -lm -lSDL_ttf -lfreetype -lSDL_gfx -lnx -lm -lstdc++
 				
-LIBS	:= -lSDL2_mixer -lopus -lvorbisidec -lmikmod -lmad -logg -lmodplug -lmpg123 -lSDL2 -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lnx -lm \
+LIBS	:= -lSDL2_mixer -lopusfile -lopus -lvorbisidec -lmikmod -lmad -logg -lmodplug -lmpg123 -lSDL2 -lglad -lEGL -lglapi -ldrm_nouveau -lSDL2_ttf -lSDL2_gfx -lSDL2_image -lnx -lm \
                 -ljpeg -lpng -lfreetype  \
                 -lz -lm -lstdc++
 #---------------------------------------------------------------------------------

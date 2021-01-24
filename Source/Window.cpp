@@ -395,9 +395,9 @@ void cWindow::RenderAt( cSurface* pImage, cPosition pSource ) {
 	Dest.w = GetWindowSize().mWidth;
 	Dest.h = GetWindowSize().mHeight;
 
-	if (mWindowMode) {
+	if (true) {
 		Dest.x = 0;
-		Dest.y = 0;
+		Dest.y = 192;
 	}
 	else {
 		SDL_DisplayMode current;
@@ -421,9 +421,9 @@ void cWindow::RenderShrunk( cSurface* pImage ) {
 	Dest.w = GetWindowSize().mWidth;
 	Dest.h = GetWindowSize().mHeight;
 
-	if (mWindowMode) {
+	if (true) {
 		Dest.x = 0;
-		Dest.y = 0;
+		Dest.y = 192;
 	}
 	else {
 		SDL_DisplayMode current;
